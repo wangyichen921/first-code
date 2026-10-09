@@ -1,0 +1,25 @@
+#!/usr/bin/env python3
+# 将目录下的图片按文件修改时间归类到 YYYY/MM 文件夹
+import os
+import shutil
+from datetime import datetime
+
+SRC_DIR = "downloads"
+DST_DIR = "photos_by_date"
+EXTS = {".jpg", ".jpeg", ".png", ".gif", ".heic"}
+
+os.makedirs(DST_DIR, exist_ok=True)
+
+for name in os.listdir(SRC_DIR):
+    path = os.path.join(SRC_DIR, name)
+    if not os.path.isfile(path):
+        continue
+    ext = os.path.splitext(name)[1].lower()
+    if ext not in EXTS:
+        continue
+    mtime = os.path.getmtime(path)
+    dt = datetime.fromtimestamp(mtime)
+    dest_folder = os.path.join(DST_DIR, f"{dt.year}", f"{dt.month:02d}")
+    os.makedirs(dest_folder, exist_ok=True)
+    shutil.move(path, os.path.join(dest_folder, name))
+print("整理完成")
